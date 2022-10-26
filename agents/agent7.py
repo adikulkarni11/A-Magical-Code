@@ -1,4 +1,122 @@
 import math
+import pdb
+import heapq
+import re
+ 
+ 
+ # Huffman encoding from==========================================
+ # https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+class node:
+    def __init__(self, freq, symbol, left=None, right=None):
+        # frequency of symbol
+        self.freq = freq
+ 
+        # symbol name (character)
+        self.symbol = symbol
+ 
+        # node left of current node
+        self.left = left
+ 
+        # node right of current node
+        self.right = right
+ 
+        # tree direction (0/1)
+        self.huff = ''
+         
+    def __lt__(self, nxt):
+        return self.freq < nxt.freq
+         
+def printNodes(node, val='', return_dict=dict()):
+     
+    # huffman code for current node
+    newVal = val + str(node.huff)
+ 
+    # if node is not an edge node
+    # then traverse inside it
+    if(node.left):
+        printNodes(node.left, newVal, return_dict)
+    if(node.right):
+        printNodes(node.right, newVal, return_dict)
+ 
+        # if node is edge node then
+        # display its huffman code
+    if(not node.left and not node.right):
+        #print(f"{node.symbol} -> {newVal}")
+        return_dict[node.symbol] = newVal
+    
+def generate_encoding():
+    chars, freq = generate_frequency()
+    nodes = []
+    # converting characters and frequencies
+    # into huffman tree nodes
+    for x in range(len(chars)):
+        heapq.heappush(nodes, node(freq[x], chars[x]))
+    
+    while len(nodes) > 1:
+        
+        # sort all the nodes in ascending order
+        # based on their frequency
+        left = heapq.heappop(nodes)
+        right = heapq.heappop(nodes)
+    
+        # assign directional value to these nodes
+        left.huff = 0
+        right.huff = 1
+    
+        # combine the 2 smallest nodes to create
+        # new node as their parent
+        newNode = node(left.freq+right.freq, left.symbol+right.symbol, left, right)
+    
+        heapq.heappush(nodes, newNode)
+    
+    # Huffman Tree is ready!
+    encoding_dict = dict()
+    printNodes(nodes[0], return_dict=encoding_dict)
+    return encoding_dict
+
+#================================================================
+
+def generate_frequency():
+    frequency = {
+    'e' : 12.0,
+    't' : 9.10,
+    'a' : 8.12,
+    'o' : 7.68,
+    'i' : 7.31,
+    'n' : 6.95,
+    's' : 6.28,
+    'r' : 6.02,
+    'h' : 5.92,
+    'd' : 4.32,
+    'l' : 3.98,
+    'u' : 2.88,
+    'c' : 2.71,
+    'm' : 2.61,
+    'f' : 2.30,
+    'y' : 2.11,
+    'w' : 2.09,
+    'g' : 2.03,
+    'p' : 1.82,
+    'b' : 1.49,
+    'v' : 1.11,
+    'k' : 0.69,
+    'x' : 0.17,
+    'q' : 0.11,
+    'j' : 0.10,
+    'z' : 0.07
+    }
+    for i in range(10):
+        frequency[str(i)] = frequency['z']
+    
+    return (
+        [k for k, v in sorted(frequency.items(), key=lambda item: item[1], reverse=True)],
+        [v for k, v in sorted(frequency.items(), key=lambda item: item[1], reverse=True)])
+
+
+
+def huffman_encoder():
+    frequency = generate_frequency()
+    
 
 class EncoderDecoder:
     def __init__(self, n=26):
@@ -109,3 +227,11 @@ class Agent:
 #
 # print(p)
 # print(f'#{s}#')
+
+#testing
+def main():
+    dict = generate_encoding()
+    print(dict)
+    
+if __name__=="__main__":
+    main()
