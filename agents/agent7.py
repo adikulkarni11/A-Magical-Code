@@ -75,7 +75,7 @@ def huffman_encoding(chars, freq):
     return char_dict, bin_dict
 
 #================================================================
-
+import random 
 def alpha_number_frequency():
     frequency = {
     'e' : 12.0,
@@ -172,13 +172,18 @@ class EncoderDecoder:
         ret = ''
         for c in s[:14]:
             ret += self.char_dict[c]
-        
+        # need this 1 since some encoding doesnt start with 1
+        # i.e. two 'space' ("  ") has encoding 001001
+        # when put in front of string, the return binary become
+        # 1001xxxxx, which translate to ixxxxx (i has encdoing 1001)
+        ret = '1' + ret
         n = int(ret, 2)
         return self.nth_perm(n)
 
     def perm_to_str(self, permutation):
         n = self.perm_number(permutation)
         binary_string = self.to_binary(n)
+        binary_string = binary_string[1:]
         last_i = 0
         ret = ''
         for i in range(1, len(binary_string) + 1):
@@ -217,7 +222,7 @@ class Agent:
 #testing
 def test_huffman():
     ed = EncoderDecoder(26)
-    p = ed.str_to_perm('abc')
+    p = ed.str_to_perm('abcasd1de 123')
     s = ed.perm_to_str(p)
 
     print(p)
