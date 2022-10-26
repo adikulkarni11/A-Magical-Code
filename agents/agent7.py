@@ -172,19 +172,24 @@ class EncoderDecoder:
         ret = ''
         for c in s[:14]:
             ret += self.char_dict[c]
+        
         n = int(ret, 2)
         return self.nth_perm(n)
 
     def perm_to_str(self, permutation):
         n = self.perm_number(permutation)
         binary_string = self.to_binary(n)
-        binary_string = '0' * ((6 - len(binary_string) % 6) % 6) + binary_string
-
+        last_i = 0
         ret = ''
-        for i in range(0, len(binary_string) - 5, 6):
-            if binary_string[i:i + 6] not in self.bin_dict:
-                return 'PARTIAL: '
-            ret += self.bin_dict[binary_string[i:i + 6]]
+        for i in range(1, len(binary_string) + 1):
+            current = binary_string[last_i:i]
+            if current in self.bin_dict:
+                ret += self.bin_dict[current]
+                last_i = i
+        # for i in range(0, len(binary_string) - 5, 6):
+        #     if binary_string[i:i + 6] not in self.bin_dict:
+        #         return 'PARTIAL: '
+        #     ret += self.bin_dict[binary_string[i:i + 6]]
         return ret
 
 
@@ -209,17 +214,16 @@ class Agent:
 
         return self.ed.perm_to_str(perm[:-2])
 
-# ed = EncoderDecoder(26)
-# p = ed.str_to_perm('')
-# s = ed.perm_to_str(p)
-#
-# print(p)
-# print(f'#{s}#')
-
 #testing
-def main():
+def test_huffman():
+    ed = EncoderDecoder(26)
+    p = ed.str_to_perm('abc')
+    s = ed.perm_to_str(p)
+
+    print(p)
+    print(f'#{s}#')
+    
     dict = huffman_encoding(*alpha_number_frequency())
     #print(dict)
     
-if __name__=="__main__":
-    main()
+test_huffman()
