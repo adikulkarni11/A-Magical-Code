@@ -44,8 +44,7 @@ def printNodes(node, val='', return_dict=dict()):
         #print(f"{node.symbol} -> {newVal}")
         return_dict[node.symbol] = newVal
     
-def generate_encoding():
-    chars, freq = generate_frequency()
+def huffman_encoding(chars, freq):
     nodes = []
     # converting characters and frequencies
     # into huffman tree nodes
@@ -70,13 +69,14 @@ def generate_encoding():
         heapq.heappush(nodes, newNode)
     
     # Huffman Tree is ready!
-    encoding_dict = dict()
-    printNodes(nodes[0], return_dict=encoding_dict)
-    return encoding_dict
+    char_dict = dict()
+    printNodes(nodes[0], return_dict=char_dict)
+    bin_dict = {v: k for k, v in char_dict.items()}
+    return char_dict, bin_dict
 
 #================================================================
 
-def generate_frequency():
+def alpha_number_frequency():
     frequency = {
     'e' : 12.0,
     't' : 9.10,
@@ -107,22 +107,16 @@ def generate_frequency():
     }
     for i in range(10):
         frequency[str(i)] = frequency['z']
-    
+    frequency[' '] = frequency['e']
     return (
-        [k for k, v in sorted(frequency.items(), key=lambda item: item[1], reverse=True)],
-        [v for k, v in sorted(frequency.items(), key=lambda item: item[1], reverse=True)])
-
-
-
-def huffman_encoder():
-    frequency = generate_frequency()
+        [k for k, _ in sorted(frequency.items(), key=lambda item: item[1], reverse=True)],
+        [v for _, v in sorted(frequency.items(), key=lambda item: item[1], reverse=True)])
     
 
 class EncoderDecoder:
     def __init__(self, n=26):
         self.encoding_len = n
-        characters = " 1234567890abcdefghijklmnopqrstuvwxyz"
-        self.char_dict, self.bin_dict = self.binary_encoding_dicts(characters)
+        self.char_dict, self.bin_dict = self.binary_encoding_dicts()
         self.perm_zero = list(range(50-n, 50))
 
         factorials = [0] * n
@@ -148,14 +142,8 @@ class EncoderDecoder:
         ret += str(n)
         return ret[::-1]
 
-    def binary_encoding_dicts(self, characters):
-        char_dict = {}
-        bin_dict = {}
-        for i in range(len(characters)):
-            b = self.to_binary_padded(i)
-            char_dict[characters[i]] = b
-            bin_dict[b] = characters[i]
-
+    def binary_encoding_dicts(self):
+        char_dict, bin_dict = huffman_encoding(*alpha_number_frequency())
         return char_dict, bin_dict
 
     def perm_number(self, permutation):
@@ -230,8 +218,8 @@ class Agent:
 
 #testing
 def main():
-    dict = generate_encoding()
-    print(dict)
+    dict = huffman_encoding(*alpha_number_frequency())
+    #print(dict)
     
 if __name__=="__main__":
     main()
