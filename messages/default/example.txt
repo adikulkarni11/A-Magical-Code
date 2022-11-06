@@ -1,6 +1,1 @@
 person
-woman
-man
-camera
-tv
-NULL

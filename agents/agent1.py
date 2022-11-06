@@ -387,11 +387,16 @@ class Agent:
             logging.warning(f"Input text longer than {max_chars} characters. Shortening message to "
                             f"'{message}'")
 
+        print(message)
+
         num = self.perm.str_to_num(message)
+        print('nnn',num, type(num))
         seq_encode = self.perm.num_to_perm(num)
+        print('sss', seq_encode)
 
         # Calculate Checksum
         checksum = calc_checksum(num)
+        print('ccc', checksum)
         self.checksum_encode = checksum
         seq_checksum = self.perm_ck.num_to_perm(checksum)
 
@@ -399,22 +404,27 @@ class Agent:
         seq_rand = [c for c in range(52) if c not in self.valid_cards_p+self.valid_cards_c]
         self.rng.shuffle(seq_rand)
         seq_total = seq_rand + seq_encode + seq_checksum
+        print('seq_rand', seq_rand)
+        print('seq_encode', seq_encode)
+        print('seq_checksum',seq_checksum)
+        print('total', seq_total)
         return seq_total
 
     def decode(self, deck):
         # Todo: Add checksum
         seq_encode = [c for c in deck if c in self.valid_cards_p]
-
-        # TESTING
-        seq_encode = [seq_encode[1]] + [seq_encode[0]] + seq_encode[2:]
-        seq_encode = [seq_encode[1]] + [seq_encode[0]] + seq_encode[2:]
+        print('seq_encode', seq_encode)
 
         seq_checksum = tuple([c for c in deck if c in self.valid_cards_c])
+        print('meewwoow', seq_checksum)
         decoded_checksum = self.perm_ck.perm_to_num(seq_checksum)
         self.checksum_decode = decoded_checksum
 
         msg_int = self.perm.perm_to_num(seq_encode)
         msg_checksum = calc_checksum(msg_int)
+        print(msg_checksum)
+        print(decoded_checksum)
+        print('--/\--')
         if msg_checksum == decoded_checksum:
             decoded_str = self.perm.perm_to_str(seq_encode)
         else:
@@ -426,7 +436,8 @@ class Agent:
                 decoded_str = self.perm.perm_to_str(fixed_seq)
             else:
                 decoded_str = "NULL"
-
+        print("---------")
+        print(decoded_str)
         return decoded_str
 
 

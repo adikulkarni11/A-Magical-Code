@@ -457,6 +457,7 @@ def bottom_cards_encode(value: int, n: int) -> list[int]:
         cards.append(card_value)
         # Move to the bottom of the current bin
         current_value += bin_no * bin_width
+    print('hehehe', cards)
 
     return cards
 
@@ -603,6 +604,7 @@ def check_and_remove(bits: str) -> tuple[bool, int, str]:
     # Pad message to target length with leading 0's
     message = pad(message, message_length, allow_over=True)
     checked_bits = message + encoding_bits + length_byte
+
     checked_checksum = sha_checksum(checked_bits, CHECKSUM_BITS)
     return checked_checksum == message_checksum, encoding_id, message
 
@@ -684,21 +686,28 @@ class Agent:
         return self.failed_decodes / self.total_decodes
 
     def encode(self, message: str):
+        print(message)
         try:
             encoded, encoding_id = select_character_encoding(message)
+            print('encoded',encoded, type(encoded))
+            
         except ValueError as e:
             # TODO: Lossy encoding when no encodings cover the message domain
             print(e)
             return list(range(52))
-
+        print('message', message)
         message_length = length_byte(encoded)
+        print('ml',message_length)
         encoding_bits = pad(to_bit_string(encoding_id), ENCODING_BITS)
+        print('encoding_bits', encoding_bits)
         checked_bits = encoded + encoding_bits + message_length
         # Checksum checks all other bits
         checksum = sha_checksum(checked_bits, CHECKSUM_BITS)
+        print('yerrrrrrrr',checksum)
         with_checksum = checked_bits + checksum
-
+        print(with_checksum)
         c = find_c_for_message(with_checksum)
+        print('ceeee', c)
         try:
             card_encoded = bottom_cards_encode(from_bit_string(with_checksum), c)
         except ValueError as e:
