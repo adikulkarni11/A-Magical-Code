@@ -207,11 +207,13 @@ class Agent:
 
         print('decoded_checksum', decoded_checksum)
         print('message_Checksum', message_checksum)
-        print(self.ed.perm_to_str(msg_perm))
+        
 
         if message_checksum != decoded_checksum:
+            print("MESSAGE CHECKSUM IS NOT EQUAL TO DECODED CHECKSUM")
             return "NULL"
         else:
+            print(self.ed.perm_to_str(msg_perm))
             return self.ed.perm_to_str(msg_perm)
 
 '''
