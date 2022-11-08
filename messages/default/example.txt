@@ -1,1 +1,5 @@
 person
+camera
+happy
+dog
+bottle
