@@ -128,14 +128,14 @@ class EncoderDecoder:
         # Stop match string at unknown char, to meet with partial requirements
         tokens = []
         for ch in message:
-            if ch in self.chars:    #TODO utilize self.char_dict
+            if ch in self.chars:    #TODO utilize self.char_dict instead of tokens
                 tokens.append(ch)
             else:
                 break
         while len(tokens) < self.max_messge_length:
             tokens.append(" ")
 
-        print(tokens)
+
         tokens = tokens[::-1]
 
         # Convert char to int
